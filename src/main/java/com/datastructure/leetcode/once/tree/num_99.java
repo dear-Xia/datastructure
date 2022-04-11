@@ -2,6 +2,7 @@ package com.datastructure.leetcode.once.tree;
 
 import javax.jnlp.ClipboardService;
 import java.util.ArrayList;
+import java.util.List;
 
 public class num_99 {
     //恢复二叉搜索树
@@ -9,34 +10,49 @@ public class num_99 {
 
     }
 
-    /**
-     * 1,判断交换的两个点
-     * 目前看到的是：
-     *         中序递增序列
-     *      我们要做的是找到第一个后一个比前一个小，和前一个比后一个大的点，就是这个两个点了
-     */
-
-    public static ArrayList<Integer> getErrorNode(TreeNode root, ArrayList<Integer>list){
+    public static void recoverTree1(TreeNode root) {
         if(root == null){
-            return list;
+            return;
         }
-
-        getErrorNode(root.left,list);
-        list.add(root.val);
-        getErrorNode(root.right,list);
-
-        return list;
+        List<Integer> list = new ArrayList<>();
+        getVal(root,list);
+        int[] result = getError(list);
+        recover(root,result[0],result[1]);
     }
+    public static void recover(TreeNode root,int x,int y){
+        if(root == null){
+            return;
+        }
+        if(root.val == x || root.val == y){
+            root.val = root.val==x ? y:x;
+        }
+        recover(root.left,x,y);
+        recover(root.right,x,y);
+    }
+    public static int[] getError(List<Integer> list){
 
-    //找到两个被交换的节点值
-    public static  int[] getErrorNodeVal(ArrayList<Integer>list){
-        int [] result = new int[2];
-        for(int i=1;i<list.size();i++){
-            if(list.get(i)<list.get(i)){
-
+        int flage1 = -1;
+        int flage2 = -1;
+        for(int i=0;i<list.size()-1;i++){
+            if(list.get(i)>list.get(i+1)){
+                flage2 = i+1;
+                if(flage1 == -1){
+                    flage1 = i;
+                }else {
+                    break;
+                }
             }
         }
-        return result;
+        return new int[]{list.get(flage1),list.get(flage2)};
+
+    }
+    public static void getVal(TreeNode root,List<Integer> list){
+        if(root == null){
+            return;
+        }
+        getVal(root.left,list);
+        list.add(root.val);
+        getVal(root.right,list);
     }
 
 
